@@ -15,12 +15,12 @@ function App() {
     client.models.Todo.observeQuery().subscribe({
       next: (data) => setTodos([...data.items]),
     });
-  }, []);
+  });
 
   function createTodo() {
     client.models.Todo.create({ content: window.prompt("Todo content") });
   }
-
+//_123abcABC_
   return (
     <Authenticator>
       {({ signOut, user}) => (
