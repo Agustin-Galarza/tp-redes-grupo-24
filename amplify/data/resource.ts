@@ -7,11 +7,44 @@ specifies that any user authenticated via an API key can "create", "read",
 "update", and "delete" any "Todo" records.
 =========================================================================*/
 const schema = a.schema({
-  Todo: a
+  User: a
     .model({
-      content: a.string(),
+      id: a.id(),
+      name: a.string(),
+      email: a.string(),
+      friends: a.hasMany("User", "id"),
+      posts: a.hasMany("Post", "id"),
+      comments: a.hasMany("Comment", "id"),
     })
-    .authorization((allow) => [allow.owner()]),
+    .authorization((allow) => [
+      allow.publicApiKey().to(["read"]),
+      allow.owner(),
+    ]),
+  Post: a
+    .model({
+      id: a.id(),
+      title: a.string(),
+      content: a.string(),
+      user: a.belongsTo("User", "id"),
+      comments: a.hasMany("Comment", "id"),
+    })
+    .authorization((allow) => [
+      allow.publicApiKey().to(["read"]),
+      allow.owner(),
+    ]),
+  Comment: a
+    .model({
+      id: a.id(),
+      content: a.string(),
+      postOwner: a.belongsTo("User", "id"),
+      author: a.belongsTo("User", "id"),
+      post: a.belongsTo("Post", "id"),
+    })
+    .authorization((allow) => [
+      allow.publicApiKey().to(["read"]),
+      allow.ownerDefinedIn("postOwner").to(["delete"]),
+      allow.ownerDefinedIn("author"),
+    ]),
 });
 
 export type Schema = ClientSchema<typeof schema>;
