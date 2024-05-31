@@ -1,0 +1,424 @@
+openapi: 3.0.0
+info:
+  title: Social Media Platform API
+  version: 1.0.0
+  description: API for a social media platform
+servers:
+  - url: http://localhost/api
+paths:
+  /users:
+    get:
+      summary: Get all users
+      parameters:
+        - $ref: '#/components/parameters/Page'
+        - $ref: '#/components/parameters/PageSize'
+
+      responses:
+        '200':
+          description: A list of users
+          headers:
+            X-Page-Size:
+              $ref: '#/components/headers/PageSize'
+            X-Page-Number:
+              $ref: '#/components/headers/PageNumber'
+            X-Total-Elements:
+              $ref: '#/components/headers/TotalElements'
+            Link:
+              schema:
+                allOf:
+                  - $ref: '#/components/headers/Link'
+                  - example: '<https://api.example.com/resources?page=3>; rel="next", <https://api.example.com/resources?page=1>; rel="prev", <https://api.example.com/resources?page=1>; rel="first", <https://api.example.com/resources?page=6>; rel="last"'
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/User'
+      tags: [Users]
+    post:
+      summary: Create a new user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  format: email
+                  example: johndoe@email.com
+                password:
+                  type: string
+                  example: secret
+                firstName:
+                  type: string
+                  example: John
+                lastName:
+                  type: string
+                  example: Doe
+      responses:
+        '201':
+          description: The created user
+          headers:
+            Location:
+              $ref: "#/components/headers/Created"
+      tags: [Users]
+  /users/{userId}:
+    get:
+      summary: Get a user by ID
+      parameters:
+        - $ref: "#/components/parameters/UserId"
+      responses:
+        '200':
+          description: A single user
+          headers:
+            Link:
+              schema:
+                type: string
+                description: User related resources
+                example: '<https://api.example.com/users/01ARZ3NDEKTSV4RRFFQ69G5FAV/friends>; rel="friends", <https://api.example.com/posts?author=01ARZ3NDEKTSV4RRFFQ69G5FAV>; rel="posts"'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '404':
+          description: User not found
+      tags: [Users]
+  /users/{userId}/friends:
+    parameters:
+      - $ref: '#/components/parameters/UserId'
+
+    get:
+      summary: Get a list of the user's friends
+      parameters:
+        - $ref: '#/components/parameters/Page'
+        - $ref: '#/components/parameters/PageSize'
+      responses:
+        '200':
+          description: A list of references to the user's friends
+          headers:
+            X-Page-Size:
+              $ref: '#/components/headers/PageSize'
+            X-Page-Number:
+              $ref: '#/components/headers/PageNumber'
+            X-Total-Elements:
+              $ref: '#/components/headers/TotalElements'
+            Link:
+              schema:
+                allOf:
+                  - $ref: '#/components/headers/Link'
+                  - example: '<https://api.example.com/resources?page=3>; rel="next", <https://api.example.com/resources?page=1>; rel="prev", <https://api.example.com/resources?page=1>; rel="first", <https://api.example.com/resources?page=6>; rel="last"'
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Uri'
+      tags: [Users]
+    post:
+      summary: Add friend
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                userIds:
+                  type: array
+                  items:
+                    type: integer
+              required: [ userIds ]
+      responses:
+        "200":
+          description: User added successfully
+      tags: [Users]
+  /users/{userId}/posts:
+    parameters:
+      - $ref: "#/components/parameters/UserId"
+    post:
+      summary: Create a new post
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                  example: My new post
+                content:
+                  type: string
+                  example: This new post is to say hello to everyone
+              required: [title, content]
+      responses:
+        '201':
+          description: The created post
+          headers:
+            Location:
+              $ref: '#/components/headers/Created'
+      tags: [Users, Posts]
+  /posts:
+    get:
+      summary: Get all posts
+      parameters:
+        - $ref: '#/components/parameters/Page'
+        - $ref: '#/components/parameters/PageSize'
+        - name: author
+          description: Filter posts by author
+          in: query
+          required: false
+          schema:
+            $ref: "#/components/schemas/Id"
+      responses:
+        '200':
+          description: A list of posts
+          headers:
+            X-Page-Size:
+              $ref: '#/components/headers/PageSize'
+            X-Page-Number:
+              $ref: '#/components/headers/PageNumber'
+            X-Total-Elements:
+              $ref: '#/components/headers/TotalElements'
+            Link:
+              schema:
+                allOf:
+                  - $ref: '#/components/headers/Link'
+                  - example: '<https://api.example.com/resources?page=3>; rel="next", <https://api.example.com/resources?page=1>; rel="prev", <https://api.example.com/resources?page=1>; rel="first", <https://api.example.com/resources?page=6>;'
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Post'
+      tags: [Posts]
+  /posts/{postId}:
+    get:
+      summary: Get a post by ID
+      parameters:
+        - name: postId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: A single post
+          headers:
+            Link:
+              schema: 
+                type: string
+                example: '<https://api.example.com/users/01ARZ3NDEKTSV4RRFFQ69G5FAV>; rel="author", <https://api.example.com/posts/01ARZ3NDEKTSV4RRFFQ69G5FAV/comments>; rel="comments"'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Post'
+        '404':
+          description: Post not found
+      tags: [Posts]
+  /posts/{postId}/comments:
+    parameters:
+      - $ref: '#/components/parameters/PostId'
+    get:
+      summary: Get comments for a post
+      parameters:
+        - $ref: '#/components/parameters/Page'
+        - $ref: '#/components/parameters/PageSize'
+        - name: post
+          description: Filter comments by post
+          in: query
+          schema: 
+            $ref: "#/components/schemas/Id"
+        - name: author
+          description: Filter comments by author
+          in: query
+          schema:
+            $ref: "#/components/schemas/Id"
+      responses:
+        '200':
+          description: A list of Comments
+          headers:
+            X-Page-Size:
+              $ref: '#/components/headers/PageSize'
+            X-Page-Number:
+              $ref: '#/components/headers/PageNumber'
+            X-Total-Elements:
+              $ref: '#/components/headers/TotalElements'
+            Link:
+              schema:
+                allOf:
+                  - $ref: '#/components/headers/Link'
+                  - example: '<https://api.example.com/resources?page=3>; rel="next", <https://api.example.com/resources?page=1>; rel="prev", <https://api.example.com/resources?page=1>; rel="first", <https://api.example.com/resources?page=6>;'
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Uri'
+                example: [https://api.example.com/post/01ARZ3NDEKTSV4RRFFQ69G5FAV/comments/01BX5ZZKBKACTAV9WEVGEMMVS0, https://api.example.com/post/01ARZ3NDEKTSV4RRFFQ69G5FAV/comments/01BX5ZZKBKACTAV9WEVGEMMVS0]
+      tags: [Posts,Comments]
+    post:
+      summary: Add a comment to a post
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: string
+              example: Hey, nice post!
+      responses:
+        '201':
+          description: The created comment
+          headers:
+            Location:
+              $ref: "#/components/headers/Created"
+      tags: [Posts,Comments]
+  /comments/{commentId}:
+    get:
+      summary: Get a comment by ID
+      parameters:
+        - name: commentId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: A single comment
+          headers:
+            Link:
+              schema:
+                type: string
+                example: '<https://api.example.com/users/01ARZ3NDEKTSV4RRFFQ69G5FAV>; rel="author", <https://api.example.com/posts/01ARZ3NDEKTSV4RRFFQ69G5FAV>; rel="post"'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Comment'
+        '404':
+          description: Comment not found
+      tags: [Comments]
+components:
+  parameters:
+    UserId:
+      name: userId
+      in: path
+      required: true
+      schema:
+        $ref: "#/components/schemas/Id"
+    PostId:
+      name: postId
+      in: path
+      required: true
+      schema:
+        $ref: "#/components/schemas/Id"
+    CommentId:
+      name: commentId
+      in: path
+      required: true
+      schema:
+        $ref: "#/components/schemas/Id"
+    Page:
+      name: page
+      in: query
+      required: false
+      schema:
+        type: integer
+        default: 1
+        example: 2
+    PageSize:
+      name: page_size
+      in: query
+      required: false
+      schema:
+        type: integer
+        example: 15
+  headers:
+    Link:
+      description: >
+                Link header containing relations to other resources.
+                The following relations are included:
+
+                - `next`: The next resource in the list
+                
+                - `prev`: The previous resource in the list
+
+      schema:
+        type: string
+        example: '<https://api.example.com/resources?page=3>; rel="next", <https://api.example.com/resources?page=1>; rel="prev"'
+    Created:
+      description: The location of the created resource
+      schema:
+        $ref: "#/components/schemas/Uri"
+    PageSize:
+      description: The amount of items in the paginated collection
+      schema:
+        type: integer
+        example: 20
+    PageNumber:
+      description: The number of the current page
+      schema:
+        type: integer
+        example: 2
+    TotalElements:
+      description: The total amount of elements for this result
+      schema:
+        type: integer
+        example: 87
+  schemas:
+    Id:
+      type: string
+      description: Id of a resource
+      format: ULID
+      example: 01ARZ3NDEKTSV4RRFFQ69G5FAV
+    Uri:
+      type: string
+      format: url
+      example: '/resources/01ARZ3NDEKTSV4RRFFQ69G5FAV'
+    DateTime:
+      type: string
+      format: date-time
+      example: 2024-05-30T18:48:56Z
+    Date:
+      type: string
+      format: date
+      example: 2024-05-30
+    User:
+      type: object
+      properties:
+        id:
+          $ref: "#/components/schemas/Id"
+        firstName:
+          type: string
+          example: John
+        lastName:
+          type: string
+          example: Doe
+        email:
+          type: string
+          example: johndoe@email.com
+        createdAt:
+          $ref: "#/components/schemas/DateTime"
+    Post:
+      type: object
+      properties:
+        id:
+          $ref: "#/components/schemas/Id"
+        title:
+          type: string
+          example: My new post
+        content:
+          type: string
+          example: This new post is to say hello to everyone
+        createdAt:
+          $ref: "#/components/schemas/DateTime"
+    Comment:
+      type: object
+      properties:
+        id:
+          $ref: "#/components/schemas/Id"
+        text:
+          type: string
+          example: Nice post!
+        createdAt:
+          $ref: "#/components/schemas/DateTime"
