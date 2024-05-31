@@ -46,8 +46,9 @@ const schema = a.schema({
     .model({
       content: a.string(),
       postOwnerId: a.string(),
-      postOwner: a.belongsTo("User", "postOwnerId"),
+      //postOwner: a.belongsTo("User", "postOwnerId"),
       owner: a.string(),
+      author: a.belongsTo("User", "owner"),
       postId: a.id(),
       post: a.belongsTo("Post", "postId"),
     })
