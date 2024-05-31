@@ -9,41 +9,50 @@ specifies that any user authenticated via an API key can "create", "read",
 const schema = a.schema({
   User: a
     .model({
-      id: a.id(),
+      id: a.string(),
       name: a.string(),
       email: a.string(),
-      friends: a.hasMany("User", "id"),
-      posts: a.hasMany("Post", "id"),
-      comments: a.hasMany("Comment", "id"),
+      posts: a.hasMany("Post", "owner"),
+      comments: a.hasMany("Comment", "owner"),
+      followers: a.hasMany("UserFollows", "followedId"),
+      following: a.hasMany("UserFollows", "followerId"),
     })
     .authorization((allow) => [
-      allow.publicApiKey().to(["read"]),
-      allow.owner(),
+      allow.guest().to(["read"]),
+      allow.ownerDefinedIn("id"),
+    ]),
+  UserFollows: a
+    .model({
+      followerId: a.string(),
+      follower: a.belongsTo("User", "followerId"),
+      followedId: a.string(),
+      followed: a.belongsTo("User", "followedId"),
+    })
+    .authorization((allow) => [
+      allow.guest().to(["read"]),
+      allow.ownerDefinedIn("followerId"),
+      //allow.ownerDefinedIn("followedId").to(["read"]),
     ]),
   Post: a
     .model({
-      id: a.id(),
       title: a.string(),
       content: a.string(),
-      user: a.belongsTo("User", "id"),
-      comments: a.hasMany("Comment", "id"),
+      author: a.belongsTo("User", "owner"),
+      comments: a.hasMany("Comment", "postId"),
     })
-    .authorization((allow) => [
-      allow.publicApiKey().to(["read"]),
-      allow.owner(),
-    ]),
+    .authorization((allow) => [allow.guest().to(["read"]), allow.owner()]),
   Comment: a
     .model({
-      id: a.id(),
       content: a.string(),
-      postOwner: a.belongsTo("User", "id"),
-      author: a.belongsTo("User", "id"),
-      post: a.belongsTo("Post", "id"),
+      postOwnerId: a.string(),
+      //postOwner: a.belongsTo("User", "postOwnerId"),
+      postId: a.id(),
+      post: a.belongsTo("Post", "postId"),
     })
     .authorization((allow) => [
-      allow.publicApiKey().to(["read"]),
-      allow.ownerDefinedIn("postOwner").to(["delete"]),
-      allow.ownerDefinedIn("author"),
+      allow.guest().to(["read"]),
+      allow.ownerDefinedIn("postOwnerId").to(["delete"]),
+      allow.owner(),
     ]),
 });
 
@@ -65,7 +74,7 @@ Go to your frontend source code. From your client-side code, generate a
 Data client to make CRUDL requests to your table. (THIS SNIPPET WILL ONLY
 WORK IN THE FRONTEND CODE FILE.)
 
-Using JavaScript or Next.js React Server Components, Middleware, Server 
+Using JavaScript or Next.js React Server Components, Middleware, Server
 Actions or Pages Router? Review how to generate Data clients for those use
 cases: https://docs.amplify.aws/gen2/build-a-backend/data/connect-to-API/
 =========================================================================*/
