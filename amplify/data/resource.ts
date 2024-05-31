@@ -41,7 +41,7 @@ const schema = a.schema({
       author: a.belongsTo("User", "owner"),
       comments: a.hasMany("Comment", "postId"),
     })
-    .authorization((allow) => [allow.guest().to(["read"]), allow.owner()]),
+    .authorization((allow) => [allow.guest().to(["read"]), allow.ownerDefinedIn("owner")]),
   Comment: a
     .model({
       content: a.string(),
@@ -55,7 +55,7 @@ const schema = a.schema({
     .authorization((allow) => [
       allow.guest().to(["read"]),
       allow.ownerDefinedIn("postOwnerId").to(["delete"]),
-      allow.owner(),
+      allow.ownerDefinedIn("owner"),
     ]),
 });
 
