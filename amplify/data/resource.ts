@@ -7,11 +7,56 @@ specifies that any user authenticated via an API key can "create", "read",
 "update", and "delete" any "Todo" records.
 =========================================================================*/
 const schema = a.schema({
-  Todo: a
+  User: a
+    .model({
+      id: a.string(),
+      name: a.string(),
+      email: a.string(),
+      posts: a.hasMany("Post", "owner"),
+      comments: a.hasMany("Comment", "owner"),
+      followers: a.hasMany("UserFollows", "followedId"),
+      following: a.hasMany("UserFollows", "followerId"),
+    })
+    .authorization((allow) => [
+      allow.guest().to(["read"]),
+      allow.ownerDefinedIn("id"),
+    ]),
+  UserFollows: a
+    .model({
+      followerId: a.string(),
+      follower: a.belongsTo("User", "followerId"),
+      followedId: a.string(),
+      followed: a.belongsTo("User", "followedId"),
+    })
+    .authorization((allow) => [
+      allow.guest().to(["read"]),
+      allow.ownerDefinedIn("followerId"),
+      //allow.ownerDefinedIn("followedId").to(["read"]),
+    ]),
+  Post: a
+    .model({
+      title: a.string(),
+      content: a.string(),
+      owner: a.string(),
+      author: a.belongsTo("User", "owner"),
+      comments: a.hasMany("Comment", "postId"),
+    })
+    .authorization((allow) => [allow.guest().to(["read"]), allow.owner()]),
+  Comment: a
     .model({
       content: a.string(),
+      postOwnerId: a.string(),
+      //postOwner: a.belongsTo("User", "postOwnerId"),
+      owner: a.string(),
+      author: a.belongsTo("User", "owner"),
+      postId: a.id(),
+      post: a.belongsTo("Post", "postId"),
     })
-    .authorization((allow) => [allow.owner()]),
+    .authorization((allow) => [
+      allow.guest().to(["read"]),
+      allow.ownerDefinedIn("postOwnerId").to(["delete"]),
+      allow.owner(),
+    ]),
 });
 
 export type Schema = ClientSchema<typeof schema>;
@@ -32,7 +77,7 @@ Go to your frontend source code. From your client-side code, generate a
 Data client to make CRUDL requests to your table. (THIS SNIPPET WILL ONLY
 WORK IN THE FRONTEND CODE FILE.)
 
-Using JavaScript or Next.js React Server Components, Middleware, Server 
+Using JavaScript or Next.js React Server Components, Middleware, Server
 Actions or Pages Router? Review how to generate Data clients for those use
 cases: https://docs.amplify.aws/gen2/build-a-backend/data/connect-to-API/
 =========================================================================*/
