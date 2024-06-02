@@ -9,7 +9,12 @@ import { routeTree } from "./routeTree.gen";
 
 Amplify.configure(outputs);
 
-const router = createRouter({ routeTree });
+const queryClient = new QueryClient();
+
+const router = createRouter({
+  routeTree,
+  context: { queryClient },
+});
 
 declare module "@tanstack/react-router" {
   interface Register {
@@ -25,10 +30,8 @@ declare module "@tanstack/react-router" {
 //},
 //});
 
-const queryClient = new QueryClient();
-
 // Render the app
-const rootElement = document.getElementById('root')!
+const rootElement = document.getElementById("root")!;
 if (!rootElement.innerHTML) {
   const root = ReactDOM.createRoot(rootElement);
   root.render(

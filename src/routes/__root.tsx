@@ -1,21 +1,24 @@
 import { Authenticator } from "@aws-amplify/ui-react";
-import { createRootRoute, Outlet } from "@tanstack/react-router";
+import { QueryClient } from "@tanstack/react-query";
+import { createRootRouteWithContext, Outlet } from "@tanstack/react-router";
 import { TanStackRouterDevtools } from "@tanstack/router-devtools";
 
-export const Route = createRootRoute({
-  component: () => (
-    <Authenticator>
-      {({ signOut, user }) => (
-        <>
-          <h1>My APP - {user?.signInDetails?.loginId ?? "Anonymous"}</h1>
+export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
+  {
+    component: () => (
+      <Authenticator>
+        {({ signOut, user }) => (
+          <>
+            <h1>My APP - {user?.signInDetails?.loginId ?? "Anonymous"}</h1>
 
-          <Outlet />
+            <Outlet />
 
-          <button onClick={signOut}>Sign out</button>
+            <button onClick={signOut}>Sign out</button>
 
-          <TanStackRouterDevtools />
-        </>
-      )}
-    </Authenticator>
-  ),
-});
+            <TanStackRouterDevtools />
+          </>
+        )}
+      </Authenticator>
+    ),
+  }
+);
