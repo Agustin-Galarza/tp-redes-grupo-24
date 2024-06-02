@@ -18,7 +18,8 @@ const schema = a.schema({
       following: a.hasMany("UserFollows", "followerId"),
     })
     .authorization((allow) => [
-      allow.guest().to(["read", "list"]),
+      allow.guest().to(["read"]),
+      allow.authenticated().to(["read"]),
       allow.ownerDefinedIn("id"),
     ]),
   UserFollows: a
@@ -29,7 +30,8 @@ const schema = a.schema({
       followed: a.belongsTo("User", "followedId"),
     })
     .authorization((allow) => [
-      allow.guest().to(["read", "list"]),
+      allow.guest().to(["read"]),
+      allow.authenticated().to(["read"]),
       allow.ownerDefinedIn("followerId"),
       //allow.ownerDefinedIn("followedId").to(["read"]),
     ]),
@@ -41,7 +43,11 @@ const schema = a.schema({
       author: a.belongsTo("User", "owner"),
       comments: a.hasMany("Comment", "postId"),
     })
-    .authorization((allow) => [allow.guest().to(["read", "list"]), allow.ownerDefinedIn("owner")]),
+    .authorization((allow) => [
+      allow.guest().to(["read"]),
+      allow.authenticated().to(["read"]),
+      allow.ownerDefinedIn("owner"),
+    ]),
   Comment: a
     .model({
       content: a.string(),
@@ -53,7 +59,8 @@ const schema = a.schema({
       post: a.belongsTo("Post", "postId"),
     })
     .authorization((allow) => [
-      allow.guest().to(["read", "list"]),
+      allow.guest().to(["read"]),
+      allow.authenticated().to(["read"]),
       allow.ownerDefinedIn("postOwnerId").to(["delete"]),
       allow.ownerDefinedIn("owner"),
     ]),
