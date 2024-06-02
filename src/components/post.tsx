@@ -2,7 +2,7 @@ export function Post({
   post,
 }: {
   post: {
-    author: { name?: string | null };
+    author: { username?: string | null };
     title?: string | null;
     content?: string | null;
   };
@@ -10,7 +10,7 @@ export function Post({
   return (
     <div>
       <h1>
-        {post.author.name}: {post.title}
+        {post.author.username}: {post.title}
       </h1>
       <span>{post.content}</span>
     </div>

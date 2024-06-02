@@ -10,8 +10,7 @@ const schema = a.schema({
   User: a
     .model({
       id: a.string(),
-      name: a.string(),
-      email: a.string(),
+      username: a.string().required(),
       posts: a.hasMany("Post", "owner"),
       comments: a.hasMany("Comment", "owner"),
       followers: a.hasMany("UserFollows", "followedId"),
@@ -24,9 +23,9 @@ const schema = a.schema({
     ]),
   UserFollows: a
     .model({
-      followerId: a.string(),
+      followerId: a.string().required(),
       follower: a.belongsTo("User", "followerId"),
-      followedId: a.string(),
+      followedId: a.string().required(),
       followed: a.belongsTo("User", "followedId"),
     })
     .authorization((allow) => [
@@ -37,8 +36,8 @@ const schema = a.schema({
     ]),
   Post: a
     .model({
-      title: a.string(),
-      content: a.string(),
+      title: a.string().required(),
+      content: a.string().required(),
       owner: a.string(),
       author: a.belongsTo("User", "owner"),
       comments: a.hasMany("Comment", "postId"),
@@ -50,12 +49,12 @@ const schema = a.schema({
     ]),
   Comment: a
     .model({
-      content: a.string(),
-      postOwnerId: a.string(),
+      content: a.string().required(),
+      postOwnerId: a.string().required(),
       //postOwner: a.belongsTo("User", "postOwnerId"),
       owner: a.string(),
       author: a.belongsTo("User", "owner"),
-      postId: a.id(),
+      postId: a.id().required(),
       post: a.belongsTo("Post", "postId"),
     })
     .authorization((allow) => [

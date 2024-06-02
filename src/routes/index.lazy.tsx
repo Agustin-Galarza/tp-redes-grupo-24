@@ -1,11 +1,13 @@
 import "@aws-amplify/ui-react/styles.css";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { FormEvent } from "react";
-import { createLazyFileRoute } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
 import { amplifyClient } from "../amplifyClient";
 import { Post } from "../components/post";
+import { redirectOnNotRegistered } from "../session";
 
-export const Route = createLazyFileRoute("/")({
+export const Route = createFileRoute("/")({
+  beforeLoad: redirectOnNotRegistered,
   component: Index,
 });
 
@@ -14,7 +16,7 @@ function Index() {
     queryKey: ["posts"],
     queryFn: () =>
       amplifyClient.models.Post.list({
-        selectionSet: ["title", "content", "author.name"],
+        selectionSet: ["title", "content", "author.username"],
       }),
   });
   let queryClient = useQueryClient();

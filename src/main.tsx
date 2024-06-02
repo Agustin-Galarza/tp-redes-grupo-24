@@ -6,6 +6,7 @@ import outputs from "../amplify_outputs.json";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { RouterProvider, createRouter } from "@tanstack/react-router";
 import { routeTree } from "./routeTree.gen";
+import { Authenticator } from "@aws-amplify/ui-react";
 
 Amplify.configure(outputs);
 
@@ -13,7 +14,7 @@ const queryClient = new QueryClient();
 
 const router = createRouter({
   routeTree,
-  context: { queryClient },
+  context: { queryClient, user: undefined!, signOut: undefined! },
 });
 
 declare module "@tanstack/react-router" {
@@ -37,7 +38,11 @@ if (!rootElement.innerHTML) {
   root.render(
     <React.StrictMode>
       <QueryClientProvider client={queryClient}>
-        <RouterProvider router={router} />
+        <Authenticator>
+          {({ signOut, user }) => (
+            <RouterProvider router={router} context={{ user, signOut }} />
+          )}
+        </Authenticator>
       </QueryClientProvider>
     </React.StrictMode>
   );

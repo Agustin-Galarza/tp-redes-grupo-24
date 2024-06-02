@@ -7,8 +7,10 @@ import {
   useSuspenseQuery,
 } from "@tanstack/react-query";
 import { amplifyClient } from "../amplifyClient";
+import { redirectOnNotRegistered } from "../session";
 
 export const Route = createFileRoute("/posts/$postId")({
+  beforeLoad: redirectOnNotRegistered,
   loader: async ({ context: { queryClient }, params: { postId } }) => {
     return queryClient.ensureQueryData(postQueryOptions(postId));
   },
@@ -51,7 +53,7 @@ function PostComponent() {
 
       {post.comments.map((comment) => (
         <div>
-          <h2>{comment.author.name}</h2>
+          <h2>{comment.author.username}</h2>
           <h3>{comment.content}</h3>
         </div>
       ))}
