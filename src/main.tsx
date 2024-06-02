@@ -7,13 +7,13 @@ import outputs from "../amplify_outputs.json";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 Amplify.configure(outputs);
-const existingConfig = Amplify.getConfig();
-Amplify.configure({
-  ...existingConfig,
-  API: {
-    REST: outputs.custom.API,
-  },
-});
+//const existingConfig = Amplify.getConfig();
+//Amplify.configure({
+  //...existingConfig,
+  //API: {
+    //REST: outputs.custom.API,
+  //},
+//});
 
 const queryClient = new QueryClient();
 
