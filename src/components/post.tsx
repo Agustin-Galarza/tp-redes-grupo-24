@@ -1,9 +1,17 @@
-import { Schema } from "#amplify/data/resource";
-
-export function Post({ post }: { post: Schema["Post"]["type"] }) {
+export function Post({
+  post,
+}: {
+  post: {
+    author: { name?: string | null };
+    title?: string | null;
+    content?: string | null;
+  };
+}) {
   return (
     <div>
-      <h1>{post.title}</h1>
+      <h1>
+        {post.author.name}: {post.title}
+      </h1>
       <span>{post.content}</span>
     </div>
   );

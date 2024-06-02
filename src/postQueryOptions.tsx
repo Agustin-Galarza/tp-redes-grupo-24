@@ -4,5 +4,21 @@ import { amplifyClient } from "./amplifyClient";
 export const postQueryOptions = (postId: string) =>
   queryOptions({
     queryKey: ["posts", { postId }],
-    queryFn: () => amplifyClient.models.Post.get({ id: postId }),
+    queryFn: async () => {
+      let data = await amplifyClient.models.Post.get(
+        { id: postId },
+        {
+          selectionSet: [
+            "id",
+            "owner",
+            "title",
+            "content",
+            "author.name",
+            "comments.*",
+            "comments.author.name",
+          ],
+        }
+      );
+      return data.data!;
+    },
   });

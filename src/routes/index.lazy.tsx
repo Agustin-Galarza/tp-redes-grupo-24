@@ -1,8 +1,9 @@
 import "@aws-amplify/ui-react/styles.css";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { FormEvent } from "react";
 import { createLazyFileRoute } from "@tanstack/react-router";
 import { amplifyClient } from "../amplifyClient";
+import { Post } from "../components/post";
 
 export const Route = createLazyFileRoute("/")({
   component: Index,
@@ -11,8 +12,12 @@ export const Route = createLazyFileRoute("/")({
 function Index() {
   let posts = useQuery({
     queryKey: ["posts"],
-    queryFn: () => amplifyClient.models.Post.list(),
+    queryFn: () =>
+      amplifyClient.models.Post.list({
+        selectionSet: ["title", "content", "author.name"],
+      }),
   });
+  let queryClient = useQueryClient();
 
   async function create(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -20,7 +25,7 @@ function Index() {
       content: e.currentTarget.postContent.value,
       title: e.currentTarget.postTitle.value,
     });
-    posts.refetch();
+    queryClient.invalidateQueries({ queryKey: ["posts"] });
   }
 
   return (
@@ -28,12 +33,7 @@ function Index() {
       {posts.isLoading
         ? "loading"
         : posts.data
-          ? posts.data.data.map((post) => (
-            <div>
-              <h1>{post.title}</h1>
-              <span>{post.content}</span>
-            </div>
-          ))
+          ? posts.data.data.map((post) => <Post post={post} />)
           : `error: ${posts.error}`}
 
       <form onSubmit={create}>
