@@ -4,7 +4,7 @@ import { AuthUser } from "@aws-amplify/auth";
 
 export async function isSignedUp(cognitoId: string) {
   let user = await amplifyClient.models.User.get({ id: cognitoId });
-  user.data !== null;
+  return !user.data;
 }
 
 export async function redirectOnNotRegistered({
@@ -12,5 +12,5 @@ export async function redirectOnNotRegistered({
 }: {
   context: { user: AuthUser };
 }) {
-  if (!isSignedUp(user?.userId)) throw redirect({ to: "/signup" });
+  if (!await isSignedUp(user?.userId)) throw redirect({ to: "/signup" });
 }
