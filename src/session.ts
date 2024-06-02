@@ -4,7 +4,6 @@ import { AuthUser } from "@aws-amplify/auth";
 
 export async function isSignedUp(cognitoId: string) {
   let user = await amplifyClient.models.User.get(
-    //@ts-ignore
     { owner: cognitoId },
     { selectionSet: ["id"] }
   );
