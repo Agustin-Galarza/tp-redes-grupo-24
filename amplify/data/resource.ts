@@ -9,13 +9,15 @@ specifies that any user authenticated via an API key can "create", "read",
 const schema = a.schema({
   User: a
     .model({
-      id: a.string(),
+      owner: a.string(),
       username: a.string().required(),
       posts: a.hasMany("Post", "owner"),
       comments: a.hasMany("Comment", "owner"),
       followers: a.hasMany("UserFollows", "followedId"),
       following: a.hasMany("UserFollows", "followerId"),
     })
+    //@ts-ignore
+    .identifier(["owner"])
     .authorization((allow) => [
       allow.guest().to(["read"]),
       allow.authenticated().to(["read"]),
