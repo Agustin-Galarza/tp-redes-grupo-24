@@ -3,7 +3,7 @@ export function Post({
   onClick,
 }: {
   post: {
-    author: { username?: string | null };
+    author: { name?: string | null };
     title?: string | null;
     content?: string | null;
   };
@@ -12,7 +12,7 @@ export function Post({
   return (
     <div onClick={onClick}>
       <h1>
-        {post.author.username}: {post.title}
+        {post.author.name}: {post.title}
       </h1>
       <span>{post.content}</span>
     </div>

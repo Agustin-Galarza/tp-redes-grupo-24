@@ -1,7 +1,7 @@
 import "@aws-amplify/ui-react/styles.css";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { FormEvent } from "react";
-import { createFileRoute, redirect, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { amplifyClient } from "../amplifyClient";
 import { Post } from "../components/post";
 import { redirectOnNotRegistered } from "../session";
@@ -16,7 +16,7 @@ function Index() {
     queryKey: ["posts"],
     queryFn: () =>
       amplifyClient.models.Post.list({
-        selectionSet: ["id", "title", "content", "owner", "author.username"],
+        selectionSet: ["id", "title", "content", "owner", "author.name"],
       }),
   });
   let queryClient = useQueryClient();

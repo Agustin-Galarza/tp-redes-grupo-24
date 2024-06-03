@@ -54,7 +54,7 @@ function PostComponent() {
       {post.comments.map((comment) => (
         <div key={comment.id}>
           <h3>
-            {comment.author.username}: {comment.content}
+            {comment.author.name}: {comment.content}
           </h3>
         </div>
       ))}

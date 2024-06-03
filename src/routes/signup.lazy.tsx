@@ -9,10 +9,10 @@ export const Route = createLazyFileRoute("/signup")({
 function Signup() {
   let router = useRouter();
   let signup = useMutation({
-    mutationFn: async ({ username }: { username: string }) => {
+    mutationFn: async ({ name }: { name: string }) => {
       amplifyClient.models.User.create({
         owner: router.options.context.user.userId,
-        username,
+        name,
       });
     },
     onSuccess: () => {
@@ -25,7 +25,7 @@ function Signup() {
       <form
         onSubmit={(e) => {
           e.preventDefault();
-          signup.mutate({ username: e.currentTarget.username.value });
+          signup.mutate({ name: e.currentTarget.username.value });
         }}
       >
         <h2>Username</h2>

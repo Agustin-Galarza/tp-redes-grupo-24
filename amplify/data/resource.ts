@@ -4,7 +4,7 @@ const schema = a.schema({
   User: a
     .model({
       owner: a.string().required(),
-      username: a.string().required(),
+      name: a.string().required(),
       posts: a.hasMany("Post", "owner"),
       comments: a.hasMany("Comment", "owner"),
       followers: a.hasMany("UserFollows", "followedId"),

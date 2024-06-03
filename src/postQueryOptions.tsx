@@ -13,11 +13,11 @@ export const postQueryOptions = (postId: string) =>
             "owner",
             "title",
             "content",
-            "author.username",
+            "author.name",
             "comments.id",
             "comments.owner",
             "comments.content",
-            "comments.author.username",
+            "comments.author.name",
           ],
         }
       );
