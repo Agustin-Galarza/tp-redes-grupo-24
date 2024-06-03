@@ -11,7 +11,7 @@ function Signup() {
   let signup = useMutation({
     mutationFn: async ({ name }: { name: string }) => {
       amplifyClient.models.User.create({
-        owner: router.options.context.user.userId,
+        id: router.options.context.user.userId,
         name,
       });
     },

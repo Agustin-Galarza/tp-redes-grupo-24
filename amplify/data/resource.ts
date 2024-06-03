@@ -3,14 +3,13 @@ import { type ClientSchema, a, defineData } from "@aws-amplify/backend";
 const schema = a.schema({
   User: a
     .model({
-      owner: a.string().required(),
+      id: a.string().required(),
       name: a.string().required(),
       posts: a.hasMany("Post", "owner"),
       comments: a.hasMany("Comment", "owner"),
       followers: a.hasMany("UserFollows", "followedId"),
       following: a.hasMany("UserFollows", "followerId"),
     })
-    .identifier(["owner"])
     .authorization((allow) => [
       allow.guest().to(["read"]),
       allow.authenticated().to(["read"]),
