@@ -48,7 +48,7 @@ const schema = a.schema({
       //postOwner: a.belongsTo("User", "postOwnerId"),
       owner: a.string(),
       author: a.belongsTo("User", "owner"),
-      postId: a.id().required(),
+      postId: a.string().required(),
       post: a.belongsTo("Post", "postId"),
     })
     .authorization((allow) => [
