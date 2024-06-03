@@ -14,7 +14,9 @@ export const postQueryOptions = (postId: string) =>
             "title",
             "content",
             "author.username",
-            "comments.*",
+            "comments.id",
+            "comments.owner",
+            "comments.content",
             "comments.author.username",
           ],
         }

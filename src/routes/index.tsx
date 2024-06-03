@@ -1,7 +1,7 @@
 import "@aws-amplify/ui-react/styles.css";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { FormEvent } from "react";
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, redirect, useNavigate } from "@tanstack/react-router";
 import { amplifyClient } from "../amplifyClient";
 import { Post } from "../components/post";
 import { redirectOnNotRegistered } from "../session";
@@ -16,7 +16,7 @@ function Index() {
     queryKey: ["posts"],
     queryFn: () =>
       amplifyClient.models.Post.list({
-        selectionSet: ["title", "content", "author.username"],
+        selectionSet: ["id", "title", "content", "owner", "author.username"],
       }),
   });
   let queryClient = useQueryClient();
@@ -30,12 +30,28 @@ function Index() {
     queryClient.invalidateQueries({ queryKey: ["posts"] });
   }
 
+  let navigate = useNavigate();
+
   return (
     <main>
       {posts.isLoading
         ? "loading"
         : posts.data
-          ? posts.data.data.map((post) => <Post post={post} />)
+          ? posts.data.data.map((post) => (
+            <Post
+              key={post.id}
+              post={post}
+              onClick={() =>
+                {
+                  console.log("AAAAAA");
+                  navigate({
+                    to: "/posts/$postId",
+                    params: { postId: post.id },
+                  })
+                }
+              }
+            />
+          ))
           : `error: ${posts.error}`}
 
       <form onSubmit={create}>

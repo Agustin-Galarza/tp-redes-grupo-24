@@ -16,7 +16,7 @@ function Signup() {
       });
     },
     onSuccess: () => {
-      router.history.back();
+      router.navigate({ to: "/" });
     },
   });
 

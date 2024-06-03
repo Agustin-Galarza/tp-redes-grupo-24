@@ -41,7 +41,7 @@ function PostComponent() {
   const mutation = useMutation({
     mutationFn: postComment,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["posts", postId] });
+      queryClient.invalidateQueries({ queryKey: ["posts", { postId }] });
     },
   });
 
@@ -52,9 +52,10 @@ function PostComponent() {
       <h1>Comments</h1>
 
       {post.comments.map((comment) => (
-        <div>
-          <h2>{comment.author.username}</h2>
-          <h3>{comment.content}</h3>
+        <div key={comment.id}>
+          <h3>
+            {comment.author.username}: {comment.content}
+          </h3>
         </div>
       ))}
 
