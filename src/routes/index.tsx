@@ -16,7 +16,7 @@ const postsQueryOptions = () =>
   queryOptions({
     queryKey: ["posts"],
     queryFn: async () => {
-      let data = await amplifyClient.models.Post.list({
+      const data = await amplifyClient.models.Post.list({
         selectionSet: [
           "id",
           "title",
@@ -28,7 +28,7 @@ const postsQueryOptions = () =>
       })
         .then((d) => d.data!)
         .then(makeMutable);
-      for (let post of data) {
+      for (const post of data) {
         coalesceAuthor(post);
       }
       return data;
@@ -45,8 +45,8 @@ export const Route = createFileRoute("/")({
 });
 
 function Index() {
-  let { data: posts } = useSuspenseQuery(postsQueryOptions());
-  let queryClient = useQueryClient();
+  const { data: posts } = useSuspenseQuery(postsQueryOptions());
+  const queryClient = useQueryClient();
 
   async function create(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -57,30 +57,61 @@ function Index() {
     queryClient.invalidateQueries({ queryKey: ["posts"] });
   }
 
-  let navigate = useNavigate();
+  const navigate = useNavigate();
 
   return (
-    <main>
-      {posts.map((post) => (
-        <Post
-          key={post.id}
-          post={post}
-          onClick={() => {
-            navigate({
-              to: "/posts/$postId",
-              params: { postId: post.id },
-            });
-          }}
-        />
-      ))}
+    <>
+      <h1 className="mb-4 text-neutral-100 font-bold text-4xl">Posts</h1>
 
-      <form onSubmit={create}>
-        <h2>Title</h2>
-        <input type="text" name="postTitle"></input>
-        <h2>Content</h2>
-        <input type="text" name="postContent"></input>
-        <button type="submit">Create</button>
-      </form>
-    </main>
+      <section className="flex flex-col gap-8">
+        <div className="flex flex-col gap-4">
+          {posts.map((post) => (
+            <Post
+              key={post.id}
+              post={post}
+              onClick={() => {
+                navigate({
+                  to: "/posts/$postId",
+                  params: { postId: post.id },
+                });
+              }}
+            />
+          ))}
+        </div>
+
+        <form
+          className="flex flex-col gap-4 border-neutral-800 border-[1px] p-6 rounded-lg border-solid"
+          onSubmit={create}
+        >
+          <label className="text-neutral-200 text-sm flex flex-col gap-1">
+            Title
+            <input
+              required
+              className="focus:ring-2 outline-none focus:ring-blue-500 bg-transparent border-neutral-700 border-[1px] p-2 rounded-lg"
+              type="text"
+              name="postTitle"
+              placeholder="Title"
+            />
+          </label>
+          <label className="text-neutral-200 text-sm flex flex-col gap-1">
+            Content
+            <input
+              required
+              className="focus:ring-2 outline-none focus:ring-blue-500 bg-transparent border-neutral-700 border-[1px] p-2 rounded-lg"
+              type="text"
+              name="postContent"
+              placeholder="Content"
+            />
+          </label>
+
+          <button
+            className="bg-neutral-100 rounded-lg py-2 hover:bg-neutral-200 transition-colors duration-300 ease-in-out"
+            type="submit"
+          >
+            Create
+          </button>
+        </form>
+      </section>
+    </>
   );
 }

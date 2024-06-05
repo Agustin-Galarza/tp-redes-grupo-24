@@ -10,26 +10,35 @@ import { TanStackRouterDevtools } from "@tanstack/router-devtools";
 export const Route = createRootRouteWithContext<{
   queryClient: QueryClient;
   user: AuthUser;
-  signOut: any;
+  signOut: () => void;
 }>()({
   component: RootRoute,
 });
 
 function RootRoute() {
-  //let { signOut, user } = useRouteContext({
-    //from: "/",
-  //});
-  let {options: {context: {user, signOut}}} = useRouter();
+  const {
+    options: {
+      context: { user, signOut },
+    },
+  } = useRouter();
 
   return (
-    <>
-      <h1>My APP - {user?.signInDetails?.loginId ?? "Anonymous"}</h1>
+    <main className="bg-neutral-950 min-h-screen">
+      <div className="max-w-md mx-auto">
+        <nav className="py-2 flex items-center justify-between text-sm mb-4 text-neutral-200">
+          {user?.signInDetails?.loginId ?? "Anonymous"}
+          <button
+            className="bg-neutral-300 text-neutral-900 px-3 py-2 rounded-lg hover:bg-neutral-200 duration-300 ease-in-out transition-colors"
+            onClick={signOut}
+          >
+            Sign out
+          </button>
+        </nav>
 
-      <Outlet />
+        <Outlet />
 
-      <button onClick={signOut}>Sign out</button>
-
-      <TanStackRouterDevtools />
-    </>
+        <TanStackRouterDevtools />
+      </div>
+    </main>
   );
 }
