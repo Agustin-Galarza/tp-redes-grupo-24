@@ -17,7 +17,14 @@ const postsQueryOptions = () =>
     queryKey: ["posts"],
     queryFn: async () => {
       let data = await amplifyClient.models.Post.list({
-        selectionSet: ["id", "title", "content", "owner", "author.name"],
+        selectionSet: [
+          "id",
+          "title",
+          "content",
+          "owner",
+          "author.name",
+          "author.id",
+        ],
       })
         .then((d) => d.data!)
         .then(makeMutable);

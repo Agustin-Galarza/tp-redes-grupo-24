@@ -23,6 +23,7 @@ const postQueryOptions = (postId: string) =>
             "owner",
             "title",
             "content",
+            "author.id",
             "author.name",
             "comments.id",
             "comments.owner",
@@ -34,9 +35,9 @@ const postQueryOptions = (postId: string) =>
       )
         .then((d) => d.data!)
         .then(makeMutable);
-      if (!data.author) coalesceAuthor(data);
+      coalesceAuthor(data);
       for (let comment of data.comments) {
-        if (!comment.author) coalesceAuthor(comment);
+        coalesceAuthor(comment);
       }
       return data;
     },
@@ -90,7 +91,12 @@ function PostComponent() {
       {post.comments.map((comment) => (
         <div key={comment.id}>
           <h3>
-            {comment.author.name}: {comment.content}
+            <Link
+              to={comment.author.id ? `/users/${comment.author.id}` : undefined}
+            >
+              {comment.author.name}
+            </Link>
+            : {comment.content}
           </h3>
         </div>
       ))}
