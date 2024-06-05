@@ -1,5 +1,4 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { postQueryOptions } from "../postQueryOptions";
 import { Post } from "../components/post";
 import {
   useMutation,
@@ -8,6 +7,32 @@ import {
 } from "@tanstack/react-query";
 import { amplifyClient } from "../amplifyClient";
 import { redirectOnNotRegistered } from "../session";
+import { queryOptions } from "@tanstack/react-query";
+
+const postQueryOptions = (postId: string) =>
+  queryOptions({
+    queryKey: ["posts", { postId }],
+    queryFn: async () => {
+      let data = await amplifyClient.models.Post.get(
+        { id: postId },
+        {
+          selectionSet: [
+            "id",
+            "owner",
+            "title",
+            "content",
+            "author.name",
+            "comments.id",
+            "comments.owner",
+            "comments.content",
+            "comments.author.id",
+            "comments.author.name",
+          ],
+        }
+      );
+      return data.data!;
+    },
+  });
 
 export const Route = createFileRoute("/posts/$postId")({
   beforeLoad: redirectOnNotRegistered,
@@ -15,6 +40,7 @@ export const Route = createFileRoute("/posts/$postId")({
     return queryClient.ensureQueryData(postQueryOptions(postId));
   },
   component: PostComponent,
+  pendingComponent: () => <Loading />,
 });
 
 async function postComment({

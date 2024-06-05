@@ -1,24 +1,38 @@
 import "@aws-amplify/ui-react/styles.css";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import {
+  queryOptions,
+  useQueryClient,
+  useSuspenseQuery,
+} from "@tanstack/react-query";
 import { FormEvent } from "react";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { amplifyClient } from "../amplifyClient";
 import { Post } from "../components/post";
 import { redirectOnNotRegistered } from "../session";
+import { Loading } from "../components/loading";
+
+const postsQueryOptions = () =>
+  queryOptions({
+    queryKey: ["posts"],
+    queryFn: async () => {
+      let data = await amplifyClient.models.Post.list({
+        selectionSet: ["id", "title", "content", "owner", "author.name"],
+      });
+      return data.data!;
+    },
+  });
 
 export const Route = createFileRoute("/")({
   beforeLoad: redirectOnNotRegistered,
+  loader: async ({ context: { queryClient } }) => {
+    return queryClient.ensureQueryData(postsQueryOptions());
+  },
   component: Index,
+  pendingComponent: () => <Loading />,
 });
 
 function Index() {
-  let posts = useQuery({
-    queryKey: ["posts"],
-    queryFn: () =>
-      amplifyClient.models.Post.list({
-        selectionSet: ["id", "title", "content", "owner", "author.name"],
-      }),
-  });
+  let { data: posts } = useSuspenseQuery(postsQueryOptions());
   let queryClient = useQueryClient();
 
   async function create(e: FormEvent<HTMLFormElement>) {
@@ -34,25 +48,18 @@ function Index() {
 
   return (
     <main>
-      {posts.isLoading
-        ? "loading"
-        : posts.data
-          ? posts.data.data.map((post) => (
-            <Post
-              key={post.id}
-              post={post}
-              onClick={() =>
-                {
-                  console.log("AAAAAA");
-                  navigate({
-                    to: "/posts/$postId",
-                    params: { postId: post.id },
-                  })
-                }
-              }
-            />
-          ))
-          : `error: ${posts.error}`}
+      {posts.map((post) => (
+        <Post
+          key={post.id}
+          post={post}
+          onClick={() => {
+            navigate({
+              to: "/posts/$postId",
+              params: { postId: post.id },
+            });
+          }}
+        />
+      ))}
 
       <form onSubmit={create}>
         <h2>Title</h2>
