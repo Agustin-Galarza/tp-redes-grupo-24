@@ -22,6 +22,7 @@ const schema = a.schema({
       followedId: a.string().required(),
       followed: a.belongsTo("User", "followedId"),
     })
+    .identifier(["followerId", "followedId"])
     .authorization((allow) => [
       allow.guest().to(["read"]),
       allow.authenticated().to(["read"]),
