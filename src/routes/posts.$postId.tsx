@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { Link, createFileRoute } from "@tanstack/react-router";
 import { Post } from "../components/post";
 import {
   useMutation,
@@ -81,6 +81,8 @@ function PostComponent() {
 
   return (
     <div>
+      <Link to="/">GO BACK</Link>
+
       <Post post={post} />
 
       <h1>Comments</h1>
