@@ -5,7 +5,7 @@ import {
   useSuspenseQuery,
 } from "@tanstack/react-query";
 import { FormEvent } from "react";
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
 import { amplifyClient } from "../amplifyClient";
 import { Post } from "../components/post";
 import { redirectOnNotRegistered } from "../session";
@@ -57,8 +57,6 @@ function Index() {
     queryClient.invalidateQueries({ queryKey: ["posts"] });
   }
 
-  const navigate = useNavigate();
-
   return (
     <>
       <h1 className="mb-4 text-neutral-100 font-bold text-4xl">Posts</h1>
@@ -66,16 +64,7 @@ function Index() {
       <section className="flex flex-col gap-8">
         <div className="flex flex-col gap-4">
           {posts.map((post) => (
-            <Post
-              key={post.id}
-              post={post}
-              onClick={() => {
-                navigate({
-                  to: "/posts/$postId",
-                  params: { postId: post.id },
-                });
-              }}
-            />
+            <Post key={post.id} post={post} />
           ))}
         </div>
 

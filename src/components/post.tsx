@@ -2,18 +2,18 @@ import { Link } from "@tanstack/react-router";
 
 export function Post({
   post,
-  onClick,
 }: {
   post: {
     author: { name?: string | null; id?: string | null };
     title?: string | null;
     content?: string | null;
+    id?: string | null;
   };
   onClick?: () => void;
 }) {
   return (
-    <button
-      onClick={onClick}
+    <Link
+      to={post.id ? `/posts/${post.id}` : undefined}
       className="flex flex-col gap-2 p-6 border-neutral-800 border-[1px] border-solid rounded-lg hover:bg-neutral-800 hover:cursor-pointer transition duration-300 ease-in-out"
     >
       <h3 className="text-slate-100 text-xl font-semibold">{post.title}</h3>
@@ -24,6 +24,6 @@ export function Post({
       >
         {post.author.name}
       </Link>
-    </button>
+    </Link>
   );
 }
