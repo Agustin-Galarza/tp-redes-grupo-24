@@ -10,6 +10,7 @@ import { amplifyClient } from "../amplifyClient";
 import { Post } from "../components/post";
 import { redirectOnNotRegistered } from "../session";
 import { Loading } from "../components/loading";
+import { coalesceAuthor, makeMutable } from "../fixes";
 
 const postsQueryOptions = () =>
   queryOptions({
@@ -17,8 +18,13 @@ const postsQueryOptions = () =>
     queryFn: async () => {
       let data = await amplifyClient.models.Post.list({
         selectionSet: ["id", "title", "content", "owner", "author.name"],
-      });
-      return data.data!;
+      })
+        .then((d) => d.data!)
+        .then(makeMutable);
+      for (let post of data) {
+        coalesceAuthor(post);
+      }
+      return data;
     },
   });
 

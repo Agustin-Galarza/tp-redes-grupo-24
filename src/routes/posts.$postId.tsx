@@ -8,6 +8,8 @@ import {
 import { amplifyClient } from "../amplifyClient";
 import { redirectOnNotRegistered } from "../session";
 import { queryOptions } from "@tanstack/react-query";
+import { Loading } from "../components/loading";
+import { coalesceAuthor, makeMutable } from "../fixes";
 
 const postQueryOptions = (postId: string) =>
   queryOptions({
@@ -29,8 +31,14 @@ const postQueryOptions = (postId: string) =>
             "comments.author.name",
           ],
         }
-      );
-      return data.data!;
+      )
+        .then((d) => d.data!)
+        .then(makeMutable);
+      if (!data.author) coalesceAuthor(data);
+      for (let comment of data.comments) {
+        if (!comment.author) coalesceAuthor(comment);
+      }
+      return data;
     },
   });
 
