@@ -17,6 +17,7 @@ const schema = a.schema({
     ]),
   UserFollows: a
     .model({
+      id: a.id(),
       followerId: a.string().required(),
       follower: a.belongsTo("User", "followerId"),
       followedId: a.string().required(),
