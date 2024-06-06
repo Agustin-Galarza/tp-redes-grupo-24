@@ -68,9 +68,21 @@ async function unfollowUser({
   userId: string;
   otherUserId: string;
 }) {
-  await amplifyClient.models.UserFollows.delete({
-    followerId: userId,
-    followedId: otherUserId,
+  await amplifyClient.graphql({
+    query: `mutation ($input: DeleteUserFollowsInput!) {
+      deleteUserFollows(input: $input) {
+        followerId
+        followedId
+        createdAt
+        updatedAt
+      }
+    }`,
+    variables: {
+      input: {
+        followerId: userId,
+        followedId: otherUserId,
+      },
+    },
   });
 }
 
