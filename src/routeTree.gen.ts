@@ -14,6 +14,7 @@ import { createFileRoute } from '@tanstack/react-router'
 
 import { Route as rootRoute } from './routes/__root'
 import { Route as IndexImport } from './routes/index'
+import { Route as UsersUserIdImport } from './routes/users.$userId'
 import { Route as PostsPostIdImport } from './routes/posts.$postId'
 
 // Create Virtual Routes
@@ -29,6 +30,11 @@ const SignupLazyRoute = SignupLazyImport.update({
 
 const IndexRoute = IndexImport.update({
   path: '/',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const UsersUserIdRoute = UsersUserIdImport.update({
+  path: '/users/$userId',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -62,6 +68,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PostsPostIdImport
       parentRoute: typeof rootRoute
     }
+    '/users/$userId': {
+      id: '/users/$userId'
+      path: '/users/$userId'
+      fullPath: '/users/$userId'
+      preLoaderRoute: typeof UsersUserIdImport
+      parentRoute: typeof rootRoute
+    }
   }
 }
 
@@ -71,6 +84,7 @@ export const routeTree = rootRoute.addChildren({
   IndexRoute,
   SignupLazyRoute,
   PostsPostIdRoute,
+  UsersUserIdRoute,
 })
 
 /* prettier-ignore-end */
@@ -83,7 +97,8 @@ export const routeTree = rootRoute.addChildren({
       "children": [
         "/",
         "/signup",
-        "/posts/$postId"
+        "/posts/$postId",
+        "/users/$userId"
       ]
     },
     "/": {
@@ -94,6 +109,9 @@ export const routeTree = rootRoute.addChildren({
     },
     "/posts/$postId": {
       "filePath": "posts.$postId.tsx"
+    },
+    "/users/$userId": {
+      "filePath": "users.$userId.tsx"
     }
   }
 }
