@@ -35,7 +35,7 @@ Para deployar el sistema en AWS Amplify, hay que crear una APP en AWS Amplify de
 **Desarrollo Local**
 -------------------
 
-Para desarrollar localmente, sigue los siguientes pasos:
+Para desarrollar localmente, hay que seguir los siguientes pasos:
 
 1. Clonar este repositorio.
 2. Descargar el archivo `amplify_outputs.json` desde la consola de AWS: Amplify -> Deployments -> Deployed backend resources -> Download amplify_outputs.json y ubicarlo en el root del repositorio.
