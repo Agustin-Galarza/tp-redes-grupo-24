@@ -10,7 +10,7 @@ import { redirectOnNotRegistered } from "../session";
 import { queryOptions } from "@tanstack/react-query";
 import { Loading } from "../components/loading";
 import { coalesceAuthor, makeMutable } from "../fixes";
-import { ChevronLeft } from "lucide-react";
+import { ChevronLeft, User } from "lucide-react";
 
 const postQueryOptions = (postId: string) =>
   queryOptions({
@@ -98,10 +98,11 @@ function PostComponent() {
         <p className="text-neutral-200 text-base mb-4">{post.content}</p>
         <Link
           to={post.author.id ? `/users/${post.author.id}` : undefined}
-          className={`text-neutral-200 text-sm ${
+          className={`text-neutral-200 text-sm flex items-center gap-1 ${
             post.author.id ? "hover:cursor-pointer hover:underline" : ""
           }`}
         >
+          <User size={16} />
           {post.author.name}
         </Link>
       </div>
@@ -116,16 +117,16 @@ function PostComponent() {
           {post.comments.map((comment) => (
             <div key={comment.id}>
               <p className="text-neutral-200">
-                <span
-                  // to={
-                  //   comment.author.id
-                  //     ? `/users/${comment.author.id}`
-                  //     : undefined
-                  // }
+                <Link
+                  to={
+                    comment.author.id
+                      ? `/users/${comment.author.id}`
+                      : undefined
+                  }
                   className="text-neutral-100 font-bold mr-2"
                 >
                   - {comment.author.name}:
-                </span>
+                </Link>
                 {comment.content}
               </p>
             </div>
