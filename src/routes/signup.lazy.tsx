@@ -7,8 +7,8 @@ export const Route = createLazyFileRoute("/signup")({
 });
 
 function Signup() {
-  let router = useRouter();
-  let signup = useMutation({
+  const router = useRouter();
+  const signup = useMutation({
     mutationFn: async ({ name }: { name: string }) => {
       amplifyClient.models.User.create({
         id: router.options.context.user.userId,
@@ -21,16 +21,31 @@ function Signup() {
   });
 
   return (
-    <main>
+    <main className=" flex-1 flex items-center justify-center">
       <form
+        className="flex flex-col gap-4 border-neutral-800 border-[1px] p-6 rounded-lg border-solid w-full"
         onSubmit={(e) => {
           e.preventDefault();
           signup.mutate({ name: e.currentTarget.username.value });
         }}
       >
-        <h2>Username</h2>
-        <input type="text" name="username"></input>
-        <button type="submit">Signup</button>
+        <label className="text-neutral-200 text-sm flex flex-col gap-1">
+          Username
+          <input
+            required
+            className="focus:ring-2 outline-none focus:ring-blue-500 bg-transparent border-neutral-700 border-[1px] p-2 rounded-lg"
+            type="text"
+            name="username"
+            placeholder="Username"
+          />
+        </label>
+
+        <button
+          className="bg-neutral-100 rounded-lg py-2 hover:bg-neutral-200 transition-colors duration-300 ease-in-out"
+          type="submit"
+        >
+          Start
+        </button>
       </form>
     </main>
   );

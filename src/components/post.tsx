@@ -20,7 +20,9 @@ export function Post({
       <span className="text-slate-300 text-base">{post.content}</span>
       <Link
         to={post.author.id ? `/users/${post.author.id}` : undefined}
-        className="text-slate-200 text-sm"
+        className={`text-slate-200 text-sm w-fit  ${
+          post.author.id ? "hover:cursor-pointer hover:underline" : ""
+        }`}
       >
         {post.author.name}
       </Link>

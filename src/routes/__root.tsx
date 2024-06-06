@@ -23,8 +23,8 @@ function RootRoute() {
   } = useRouter();
 
   return (
-    <main className="bg-neutral-950 min-h-screen">
-      <div className="max-w-md mx-auto">
+    <main className="bg-neutral-950 min-h-screen flex pb-20">
+      <div className="max-w-md mx-auto flex flex-col flex-1">
         <nav className="py-2 flex items-center justify-between text-sm mb-4 text-neutral-200">
           {user?.signInDetails?.loginId ?? "Anonymous"}
           <button

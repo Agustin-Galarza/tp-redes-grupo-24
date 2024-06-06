@@ -1,4 +1,4 @@
-import { createFileRoute, useRouter } from "@tanstack/react-router";
+import { Link, createFileRoute, useRouter } from "@tanstack/react-router";
 import {
   useMutation,
   useQueryClient,
@@ -9,12 +9,13 @@ import { redirectOnNotRegistered } from "../session";
 import { queryOptions } from "@tanstack/react-query";
 import { Loading } from "../components/loading";
 import { coalesceAuthor, makeMutable } from "../fixes";
+import { ChevronLeft } from "lucide-react";
 
 const userQueryOptions = (userId: string) =>
   queryOptions({
     queryKey: ["users", { userId }],
     queryFn: async () => {
-      let data = await amplifyClient.models.User.get(
+      const data = await amplifyClient.models.User.get(
         { id: userId },
         {
           selectionSet: [
@@ -31,7 +32,7 @@ const userQueryOptions = (userId: string) =>
       )
         .then((d) => d.data!)
         .then(makeMutable);
-      for (let post of data.posts) {
+      for (const post of data.posts) {
         coalesceAuthor(post);
       }
       return data;
@@ -76,7 +77,7 @@ async function unfollowUser({
 function ProfilePage() {
   const userId = Route.useParams().userId;
   const { data: user } = useSuspenseQuery(userQueryOptions(userId));
-  let {
+  const {
     options: {
       context: {
         user: { userId: myUserId },
@@ -111,20 +112,37 @@ function ProfilePage() {
 
   return (
     <>
-      <h1 className="text-neutral-200">{user.name}</h1>
-      <div className="flex flex-col">
-        <div className="text-neutral-200">Followers: {followerCount}</div>
-        <h2 className="text-neutral-200">Following: {followingCount}</h2>
-        <button
-          className="bg-neutral-100 rounded-lg py-2 hover:bg-neutral-200 transition-colors duration-300 ease-in-out"
-          onClick={() => {
-            if (following) unfollowMutation.mutate();
-            else followMutation.mutate();
-          }}
-        >
-          {following ? "UNFOLLOW" : "FOLLOW"}
-        </button>
+      <Link
+        className="flex items-center gap-1  w-fit text-neutral-100 text-sm hover:underline mb-8"
+        to="/"
+      >
+        <ChevronLeft size={16} />
+        Go back
+      </Link>
+      <h1 className="text-neutral-200 text-4xl font-bold mb-4">{user.name}</h1>
+      <div className="flex flex-col mb-4">
+        <span className="text-neutral-200 text-sm">
+          Followers:{" "}
+          <span className="text-neutral-300 font-bold text-base">
+            {followerCount}
+          </span>
+        </span>
+        <span className="text-neutral-200 text-sm">
+          Following:{" "}
+          <span className="text-neutral-300 font-bold text-base">
+            {followingCount}
+          </span>
+        </span>
       </div>
+      <button
+        className="bg-neutral-100 rounded-lg py-2 hover:bg-neutral-200 transition-colors duration-300 ease-in-out"
+        onClick={() => {
+          if (following) unfollowMutation.mutate();
+          else followMutation.mutate();
+        }}
+      >
+        {following ? "UNFOLLOW" : "FOLLOW"}
+      </button>
     </>
   );
 }

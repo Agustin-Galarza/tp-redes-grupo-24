@@ -7,5 +7,5 @@ export function makeMutable<T>(obj: T): Mutable<T> {
 }
 
 export function coalesceAuthor(obj: { author: any }) {
-  if (!obj.author) obj.author = { name: "Alan" };
+  if (!obj.author) obj.author = { name: "Anonymous" };
 }

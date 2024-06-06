@@ -68,38 +68,43 @@ function Index() {
           ))}
         </div>
 
-        <form
-          className="flex flex-col gap-4 border-neutral-800 border-[1px] p-6 rounded-lg border-solid"
-          onSubmit={create}
-        >
-          <label className="text-neutral-200 text-sm flex flex-col gap-1">
-            Title
-            <input
-              required
-              className="focus:ring-2 outline-none focus:ring-blue-500 bg-transparent border-neutral-700 border-[1px] p-2 rounded-lg"
-              type="text"
-              name="postTitle"
-              placeholder="Title"
-            />
-          </label>
-          <label className="text-neutral-200 text-sm flex flex-col gap-1">
-            Content
-            <input
-              required
-              className="focus:ring-2 outline-none focus:ring-blue-500 bg-transparent border-neutral-700 border-[1px] p-2 rounded-lg"
-              type="text"
-              name="postContent"
-              placeholder="Content"
-            />
-          </label>
-
-          <button
-            className="bg-neutral-100 rounded-lg py-2 hover:bg-neutral-200 transition-colors duration-300 ease-in-out"
-            type="submit"
+        <div className="flex flex-col gap-2">
+          <h3 className="text-neutral-100 text-xl font-semibold">
+            Create post
+          </h3>
+          <form
+            className="flex flex-col gap-4 border-neutral-800 border-[1px] p-6 rounded-lg border-solid"
+            onSubmit={create}
           >
-            Create
-          </button>
-        </form>
+            <label className="text-neutral-200 text-sm flex flex-col gap-1">
+              Title
+              <input
+                required
+                className="focus:ring-2 outline-none focus:ring-blue-500 bg-transparent border-neutral-700 border-[1px] p-2 rounded-lg"
+                type="text"
+                name="postTitle"
+                placeholder="Title"
+              />
+            </label>
+            <label className="text-neutral-200 text-sm flex flex-col gap-1">
+              Content
+              <input
+                required
+                className="focus:ring-2 outline-none focus:ring-blue-500 bg-transparent border-neutral-700 border-[1px] p-2 rounded-lg"
+                type="text"
+                name="postContent"
+                placeholder="Content"
+              />
+            </label>
+
+            <button
+              className="bg-neutral-100 rounded-lg py-2 hover:bg-neutral-200 transition-colors duration-300 ease-in-out"
+              type="submit"
+            >
+              Create
+            </button>
+          </form>
+        </div>
       </section>
     </>
   );

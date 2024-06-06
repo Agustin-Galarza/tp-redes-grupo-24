@@ -96,7 +96,14 @@ function PostComponent() {
           {post.title}
         </h1>
         <p className="text-neutral-200 text-base mb-4">{post.content}</p>
-        <h2 className="text-neutral-200 text-sm ">{post.author.name}</h2>
+        <Link
+          to={post.author.id ? `/users/${post.author.id}` : undefined}
+          className={`text-neutral-200 text-sm ${
+            post.author.id ? "hover:cursor-pointer hover:underline" : ""
+          }`}
+        >
+          {post.author.name}
+        </Link>
       </div>
 
       <h2 className="mb-2 text-neutral-300 text-xl font-semibold">Comments</h2>
@@ -109,16 +116,16 @@ function PostComponent() {
           {post.comments.map((comment) => (
             <div key={comment.id}>
               <p className="text-neutral-200">
-                <Link
-                  to={
-                    comment.author.id
-                      ? `/users/${comment.author.id}`
-                      : undefined
-                  }
+                <span
+                  // to={
+                  //   comment.author.id
+                  //     ? `/users/${comment.author.id}`
+                  //     : undefined
+                  // }
                   className="text-neutral-100 font-bold mr-2"
                 >
                   - {comment.author.name}:
-                </Link>
+                </span>
                 {comment.content}
               </p>
             </div>
@@ -132,7 +139,7 @@ function PostComponent() {
           e.preventDefault();
           mutation.mutate({
             postId,
-            postOwnerId: post?.owner ?? "anonimo",
+            postOwnerId: post?.owner ?? "Anonymous",
             content: e.currentTarget.content.value,
           });
         }}
